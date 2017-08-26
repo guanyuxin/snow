@@ -1,10 +1,13 @@
 {
-  "name": "electron-quick-start",
+  "name": "gyxsnow",
+  "productName": "gyxsnow",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "author": "GitHub",
+  "description": "translate xsl",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "node_modules/electron-builder/out/cli/cli.js --win"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -14,9 +17,18 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "~1.6.2"
+    "electron": "~1.6.2",
+    "electron-builder": "^19.19.1",
+    "electron-winstaller": "^2.6.3"
+  },
+  "dependencies": {
+    "exceljs": "^0.5.1",
+    "google-translate-api": "^2.3.0",
+    "node-xlsx": "^0.10.0",
+    "react-bundler": "^1.0.0",
+    "vue": "^2.4.2",
+    "zepto": "^1.2.0"
   }
 }

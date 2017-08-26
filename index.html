@@ -2,18 +2,99 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>google 翻译 excel</title>
+    <style>
+    html {
+      min-height: 100%;
+    }
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+    #holder {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      background: #eee;
+      display: none;
+    }
+
+    #holder.dragover {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(200,200,200,.5);
+
+    }
+    #holder .label {
+      padding: 20px;
+      font-size: 20px;
+      border: 2px dashed #ff9;
+    }
+
+    .row {
+      display: flex;
+      border-bottom: 1px solid #eee;
+      padding: 3px 0;
+      max-height: 100px;
+    }
+    .head {
+      background: #eee;
+      font-size: 12px;
+    }
+    .cell {
+      flex: 1 0 0;
+      border-right: 1px solid #eee;
+      max-height: 100px;
+      overflow: hidden;
+    }
+    .empty {
+      position: absolute;
+      padding: 20px;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+    }
+    .progress {
+      height: 14px;
+      display: flex;
+      background: #aaa;
+    }
+    .succ {
+      display: block;
+      background: green;
+    }
+    .err {
+      display: block;
+      background: red;
+    }
+    .progresst {
+      position: absolute;
+      font-size: 10px;
+      color: #fff
+    }
+    </style>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <div class="progress">
+      <div class="succ"></div>
+      <div class="err"></div>
+      <div class="progresst"></div>
+    </div>
+    <div id="holder">
+      <div class="label">将文件拖动到这里</div>
+    </div>
+    <div id="table">
+      <div class="empty">现在没有文件，将文件拖动到窗口内开始</div>
+    </div>
+    <script>
+      // You can also require other files to run in this process
+      require('./zepto.js')
+      require('./renderer.js')
+    </script>
   </body>
-
-  <script>
-    // You can also require other files to run in this process
-    require('./renderer.js')
-  </script>
 </html>
