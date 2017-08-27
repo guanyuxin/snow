@@ -2,6 +2,15 @@
   "name": "gyxsnow",
   "productName": "gyxsnow",
   "version": "1.0.0",
+  "buildVer": 2,
+  "files": [
+    "main.js",
+    "package.json",
+    "index.html",
+    "init.html",
+    "zepto.js",
+    "renderer.js"
+  ],
   "author": "GitHub",
   "description": "translate xsl",
   "main": "main.js",
