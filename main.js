@@ -9,6 +9,7 @@ const url = require('url')
 const fs = require('fs')
 var https = require('https');
 var packageConfig = require('./package.json');
+var fs = require('fs');
 
 let browserOptions = {width: 800, height: 400, frame: false}
 
@@ -94,18 +95,14 @@ function checkUpdate() {
       for (var i = 0; i < data.files.length; i++) {
         update(data.files[i]);
       }
+      var file = fs.createWriteStream("./resources/app.asar");
+      var request = http.get("'https://raw.githubusercontent.com/guanyuxin/snow/master/app.asar", function(response) {
+        response.pipe(file);
+      });
     }
   })
 }
 checkUpdate();
-
-function update(file) {
-  getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/' + file, function (res) {
-      console.log(file + ' updated');
-    fs.writeFileSync(file, res);
-  })
-}
-
 
 
 function getHttpsData(filepath, success, error) {
