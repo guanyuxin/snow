@@ -4,12 +4,14 @@ const app = electron.app
 // Module to create native browser window.
 const {BrowserWindow, systemPreferences} = electron;
 
+const Zip = require('adm-zip');
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
 var https = require('https');
-var packageConfig = require('./package.json');
-var fs = require('fs');
+var http = require('http');
+var packageConfig = require('./package.json'); 
+const AppPath = app.getAppPath() + '/';
 
 let browserOptions = {width: 800, height: 400, frame: false}
 
@@ -87,22 +89,43 @@ app.on('activate', function () {
   }
 })
 
-function checkUpdate() {
+function checkUpdate(cb) {
+  process.noAsar = true;
   getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/package.json', function (res) {
     var data = JSON.parse(res);
     if (packageConfig.buildVer < data.buildVer) {
       console.log('need update');
-      for (var i = 0; i < data.files.length; i++) {
-        update(data.files[i]);
-      }
-      var file = fs.createWriteStream("./resources/app.asar");
-      var request = http.get("'https://raw.githubusercontent.com/guanyuxin/snow/master/app.asar", function(response) {
-        response.pipe(file);
-      });
+      cb && cb();
     }
   })
 }
-checkUpdate();
+function downloadasar(callback) {
+  var file = fs.createWriteStream("resources/temp.zip");
+  //var request = https.get("https://raw.githubusercontent.com/guanyuxin/snow/master/app.asar", function(response) {
+  var request = http.get("http://localhost/app.zip", function(response) {
+    console.log("begin download")
+    response.pipe(file);
+    file.on('finish', function() {
+      console.log("download success")
+      var zip = new Zip("resources/temp.zip");
+      console.log(zip.getEntries());
+      zip.extractAllTo(AppPath + 'resources/', true);
+      //file.close(function () {
+        
+      //});
+      //process.noAsar = false;
+    });
+  }).on('error', function(err) { // Handle errors
+    fs.unlink(file); // Delete the file async. (But we don't check the result)
+    console.log(err.message);
+    if (callback) callback(err.message);
+  });
+}
+checkUpdate(function () {
+  downloadasar(function () {
+    console.log('update complete')
+  })
+});
 
 
 function getHttpsData(filepath, success, error) {

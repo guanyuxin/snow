@@ -2,7 +2,7 @@
   "name": "gyxsnow",
   "productName": "gyxsnow",
   "version": "1.0.0",
-  "buildVer": 1,
+  "buildVer": 0,
   "files": [
     "main.js",
     "package.json",
@@ -33,6 +33,8 @@
     "electron-winstaller": "^2.6.3"
   },
   "dependencies": {
+    "adm-zip": "^0.4.7",
+    "electron-download-tf": "^4.3.4",
     "exceljs": "^0.5.1",
     "google-translate-api": "^2.3.0",
     "node-xlsx": "^0.10.0",
