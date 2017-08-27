@@ -6,14 +6,35 @@ const BrowserWindow = electron.BrowserWindow
 
 const path = require('path')
 const url = require('url')
+const fs = require('fs')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let initWindow
 
-function createWindow () {
+
+
+function createInitWindow () {
+
+  initWindow = new BrowserWindow({width: 800, height: 400, frame: false,  transparent: true})
+
+  // and load the index.html of the app.
+  initWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'init.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+
+  initWindow.on('closed', function () {
+    initWindow = null
+    app.quit();
+  })
+}
+
+function createMainWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1024, height: 800})
+  mainWindow = new BrowserWindow({width: 1024, height: 800, frame: false})
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -37,7 +58,7 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createInitWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -52,9 +73,11 @@ app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow()
+    createInitWindow()
   }
 })
+
+fs.writeFileSync('index2.html', '123');
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

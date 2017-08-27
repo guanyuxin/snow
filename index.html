@@ -11,6 +11,9 @@
       min-height: 100%;
       margin: 0;
     }
+    header {
+      -webkit-app-region: drag;
+    }
     #holder {
       position: fixed;
       left: 0;
@@ -77,9 +80,14 @@
       font-size: 10px;
       color: #fff
     }
+    #table {
+      position: relative;
+    }
     </style>
   </head>
   <body>
+    <header></header>
+    <a style="display:block;background:red" href="index2.html">--sss---</a>
     <div class="progress">
       <div class="succ"></div>
       <div class="err"></div>

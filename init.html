@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Welcome</title>
+<style>
+
+html {
+  min-height: 100%;
+  background: transparent;
+}
+body {
+  background: transparent;
+}
+@keyframes show
+{
+  0% {opacity: 0;transform:scale(.9)}
+  100% {opacity: 1;}
+}
+
+.core {
+  -webkit-app-region: drag;
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  background: rgba(255,255,255,.95);
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: show .4s;
+}
+.close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 33px;
+  width: 33px;
+  height: 33px;
+  line-height: 33px;
+  text-align: center;
+  color: #aaa;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.close:hover {
+  background: red;
+  color: #fff;
+}
+</style>
+</head>
+<body>
+<div class="core">
+  <div class="close">×</div>
+  <h1>welcome</h1>
+</div>
+</body>
+<script>
+  require('./zepto.js')
+  $('.close').click(function () {
+    window.close();
+  })
+</script>
+</html>
