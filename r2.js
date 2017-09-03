@@ -72,8 +72,8 @@ var appManager = {
 }
 
 function t(data, callback, callbackErr) {
-	setTimeout(function() {callback('123')},Math.random()*1000 + 200);
-	return;
+	//setTimeout(function() {callback('123')},Math.random()*1000 + 200);
+	//return;
 	translate(data, {from: 'zh-cn', to: 'ja'}).then(res => {
 		callback(res.text);
 	}).catch((e) => {
@@ -210,7 +210,7 @@ FileData.prototype.translate = function () {
 
 if (localStorage.path) {
 	setTimeout(function () {
-		appManager.addFile(localStorage.path);
-		appManager.confirmFile(localStorage.path);
+	//	appManager.addFile(localStorage.path);
+	//	appManager.confirmFile(localStorage.path);
 	})
 }
