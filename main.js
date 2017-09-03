@@ -89,37 +89,9 @@ app.on('activate', function () {
   }
 })
 
-
-
-function sendStatusToWindow(text) {
-  console.log(text);
-  initWindow.webContents.send('message', text);
+function sendToWin(type, msg) {
+  initWindow.webContents.send(type, msg)
 }
-autoUpdater.on('checking-for-update', () => {
-  sendStatusToWindow('Checking for update...');
-})
-autoUpdater.on('update-available', (info) => {
-  sendStatusToWindow('Update available.');
-})
-autoUpdater.on('update-not-available', (info) => {
-  sendStatusToWindow('Update not available.');
-})
-autoUpdater.on('error', (err) => {
-  sendStatusToWindow('Error in auto-updater.');
-})
-autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
-  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-  sendStatusToWindow(log_message);
-})
-autoUpdater.on('update-downloaded', (info) => {
-  sendStatusToWindow('Update downloaded; will install in 5 seconds');
-  setTimeout(function() {
-    autoUpdater.quitAndInstall();  
-  }, 5000)
-});
-
 
 var https = require('https');
 var fs = require('fs');
@@ -129,20 +101,39 @@ function checkUpdate(cb) {
   getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/package.json', function (res) {
     var data = JSON.parse(res);
     if (packageConfig.buildVer < data.buildVer) {
-      console.log('need update');
+      sendToWin('updateInfo', '检测到更新');
       cb && cb(data);
     }
   })
 }
 
 checkUpdate(function (data) {
-   data.files.forEach(function(file, i) {
-    getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/' + file, function (res) {
-      console.log('downloaded' + file);
-      fs.writeFile('./resources/app/' + file, res, function () {
-        console.log('update' + file);
+   var updateing = data.files.map(function(file, i) {
+    return new Promise(function (resolve, reject) {
+      getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/' + file, function (res) {
+        console.log('downloaded' + file);
+        fs.writeFile('./resources/app/updateTmp/' + file, res, function () {
+          sendToWin('updateInfo', '下载' + file);
+          resolve(file);
+        });
+      }, () => {
+        reject();
       });
     });
+  })
+  Promise.all(updateing).then((res) => {
+    sendToWin('updateInfo', '下载完成');
+    var moveing = res.map((file, i) => {
+      return new Promise((resolve, reject) =>{
+        fs.rename('./resources/app/updateTmp/' + file, './resources/app/' + file, () => {
+          resolve(file);
+        })
+      })
+    })
+  }, () => {
+    sendToWin('updateInfo', '更新失败');
+  }).then(()=>{
+    sendToWin('updateInfo', '更新完毕，重启生效');
   })
 });
 

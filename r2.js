@@ -4,6 +4,11 @@ const Excel = require('exceljs');
 const fs = require('fs')
 const {ipcRenderer} = require('electron')
 
+ipcRenderer.on('updateInfo', (event, message) => {
+	$('.v').text(message)
+})
+
+
 window.ondragover = (e) => {
 	for (let f of e.dataTransfer.files) {
 		if (f.name.indexOf('.xlsx') !== -1 && f.name.indexOf('_翻译') === -1) {
