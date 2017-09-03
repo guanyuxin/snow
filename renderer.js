@@ -3,7 +3,6 @@
 // All of the Node.js APIs are available in this process.
 const {ipcRenderer} = require('electron')
 const fs = require('fs')
-const xlsx = require("node-xlsx");
 const translate = require('google-translate-api');
 const holder = document.getElementById('holder')
 const body = document.body;
@@ -48,14 +47,6 @@ window.ondrop = (e) => {
 		} else {
 			addImage(f.path);
 		}
-
-		/*
-		fs.readFile(f.path, (err, data) => {
-			if (err) throw err;
-			var list = xlsx.parse(data + '');
-			console.log(list)
-		});
-		*/
 	}
 	
 	return false;

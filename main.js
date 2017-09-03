@@ -1,17 +1,17 @@
 const electron = require('electron')
-// Module to control application life.
-const app = electron.app
+const url = require('url');
+
+const path = require('path');
 // Module to create native browser window.
 const {BrowserWindow, systemPreferences} = electron;
+const {app} = require('electron')
+const autoUpdater = require("electron-updater").autoUpdater;
+const ipcMain = electron.ipcMain
 
-const Zip = require('adm-zip');
-const path = require('path')
-const url = require('url')
-const fs = require('fs')
-var https = require('https');
-var http = require('http');
-var packageConfig = require('./package.json'); 
-const AppPath = app.getAppPath() + '/';
+
+ipcMain.on('ondragstart', (ev, path) => {
+  ev.sender.startDrag({file: path, icon: "./img/xls.png"})
+})
 
 let browserOptions = {width: 800, height: 400, frame: false}
 
@@ -84,81 +84,38 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
+  if (initWindow === null) {
     createInitWindow()
   }
 })
 
-function checkUpdate(cb) {
-  process.noAsar = true;
-  getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/package.json', function (res) {
-    var data = JSON.parse(res);
-    if (packageConfig.buildVer < data.buildVer) {
-      console.log('need update');
-      cb && cb();
-    }
-  })
+
+
+function sendStatusToWindow(text) {
+  console.log(text);
+  initWindow.webContents.send('message', text);
 }
-function downloadasar(callback) {
-  var file = fs.createWriteStream("resources/temp.zip");
-  //var request = https.get("https://raw.githubusercontent.com/guanyuxin/snow/master/app.asar", function(response) {
-  var request = http.get("http://localhost/app.zip", function(response) {
-    console.log("begin download")
-    response.pipe(file);
-    file.on('finish', function() {
-      console.log("download success")
-      var zip = new Zip("resources/temp.zip");
-      console.log(zip.getEntries());
-      zip.extractAllTo(AppPath + 'resources/', true);
-      //file.close(function () {
-        
-      //});
-      //process.noAsar = false;
-    });
-  }).on('error', function(err) { // Handle errors
-    fs.unlink(file); // Delete the file async. (But we don't check the result)
-    console.log(err.message);
-    if (callback) callback(err.message);
-  });
-}
-checkUpdate(function () {
-  downloadasar(function () {
-    console.log('update complete')
-  })
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...');
+})
+autoUpdater.on('update-available', (info) => {
+  sendStatusToWindow('Update available.');
+})
+autoUpdater.on('update-not-available', (info) => {
+  sendStatusToWindow('Update not available.');
+})
+autoUpdater.on('error', (err) => {
+  sendStatusToWindow('Error in auto-updater.');
+})
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  sendStatusToWindow(log_message);
+})
+autoUpdater.on('update-downloaded', (info) => {
+  sendStatusToWindow('Update downloaded; will install in 5 seconds');
+  setTimeout(function() {
+    autoUpdater.quitAndInstall();  
+  }, 5000)
 });
-
-
-function getHttpsData(filepath, success, error) {
-  // 回调缺省时候的处理
-  success = success || function () {};
-  error = error || function () {};
-
-  var url = 'https://raw.githubusercontent.com/username/project-name/master/' + filepath + '?r=' + Math.random();
-
-  https.get(url, function (res) {
-    var statusCode = res.statusCode;
-
-    if (statusCode !== 200) {
-        // 出错回调
-        error();
-        // 消耗响应数据以释放内存
-        res.resume();
-        return;
-    }
-
-    res.setEncoding('utf8');
-    var rawData = '';
-    res.on('data', function (chunk) {
-      rawData += chunk;
-    });
-
-    // 请求结束
-    res.on('end', function () {
-      // 成功回调
-      success(rawData);
-    }).on('error', function (e) {
-      // 出错回调
-      error();
-    });
-  });
-};
