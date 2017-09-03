@@ -2,14 +2,14 @@
   "name": "gyxsnow",
   "productName": "gyxsnow",
   "version": "1.0.0",
-  "buildVer": 0,
+  "buildVer": 4,
   "files": [
     "main.js",
     "package.json",
     "index.html",
     "init.html",
     "zepto.js",
-    "renderer.js"
+    "r2.js"
   ],
   "author": "guanyuxin.com",
   "description": "translate xsl",

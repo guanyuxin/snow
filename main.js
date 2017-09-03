@@ -119,3 +119,65 @@ autoUpdater.on('update-downloaded', (info) => {
     autoUpdater.quitAndInstall();  
   }, 5000)
 });
+
+
+var https = require('https');
+var fs = require('fs');
+var packageConfig = require('./package.json')
+function checkUpdate(cb) {
+  process.noAsar = true;
+  getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/package.json', function (res) {
+    var data = JSON.parse(res);
+    if (packageConfig.buildVer < data.buildVer) {
+      console.log('need update');
+      cb && cb(data);
+    }
+  })
+}
+
+checkUpdate(function (data) {
+   data.files.forEach(function(file, i) {
+    getHttpsData('https://raw.githubusercontent.com/guanyuxin/snow/master/' + file, function (res) {
+      console.log('downloaded' + file);
+      fs.writeFile('./resources/app/' + file, res, function () {
+        console.log('update' + file);
+      });
+    });
+  })
+});
+
+
+function getHttpsData(filepath, success, error) {
+  // 回调缺省时候的处理
+  success = success || function () {};
+  error = error || function () {};
+
+  var url = 'https://raw.githubusercontent.com/username/project-name/master/' + filepath + '?r=' + Math.random();
+
+  https.get(url, function (res) {
+    var statusCode = res.statusCode;
+
+    if (statusCode !== 200) {
+        // 出错回调
+        error();
+        // 消耗响应数据以释放内存
+        res.resume();
+        return;
+    }
+
+    res.setEncoding('utf8');
+    var rawData = '';
+    res.on('data', function (chunk) {
+      rawData += chunk;
+    });
+
+    // 请求结束
+    res.on('end', function () {
+      // 成功回调
+      success(rawData);
+    }).on('error', function (e) {
+      // 出错回调
+      error();
+    });
+  });
+};
