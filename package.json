@@ -6,7 +6,6 @@
   "files": [
     "main.js",
     "package.json",
-    "index.html",
     "init.html",
     "zepto.js",
     "r2.js"
@@ -26,7 +25,9 @@
     "asar": false,
     "appId": "com.gyx.snow",
     "win": {
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     }
   },
   "license": "MIT",

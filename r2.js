@@ -72,8 +72,6 @@ var appManager = {
 }
 
 function t(data, callback, callbackErr) {
-	//setTimeout(function() {callback('123')},Math.random()*1000 + 200);
-	//return;
 	translate(data, {from: 'zh-cn', to: 'ja'}).then(res => {
 		callback(res.text);
 	}).catch((e) => {
@@ -170,7 +168,7 @@ FileData.prototype.write = function () {
 FileData.prototype.translate = function () {
 	this.worksheets.eachRow((row, i) => {
 		if (i == 1) {return}
-			
+		
 		try {
 			if (!row.getCell(4)) {
 				console.log(row);
@@ -178,7 +176,7 @@ FileData.prototype.translate = function () {
 			}
 			this.pmax += 2;
 
-			if (row.getCell(2).text) {
+			if (row.getCell(1).text) {
 				this.pmax++;
 				t(row.getCell(8).text, (msg) => {
 					row.getCell(9).value = msg;
