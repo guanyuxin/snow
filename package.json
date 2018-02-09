@@ -2,7 +2,7 @@
   "name": "gyxsnow",
   "productName": "gyxsnow",
   "version": "1.0.0",
-  "buildVer": 8,
+  "buildVer": 9,
   "files": [
     "main.js",
     "package.json",
